@@ -1,0 +1,90 @@
+#include "fiofunctions.h"
+
+bool findClientInData(QString &clientInfo, const QString &accNum)
+{
+    QFile data("data.txt");
+    if(!data.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+    QTextStream in(&data);
+    while(!in.atEnd())
+    {
+        clientInfo = in.readLine();
+        QString accNum = clientInfo.section(' ', BankAccount::Number, BankAccount::Number);
+        QString pin = clientInfo.section(' ', BankAccount::Pin, BankAccount::Pin);
+        if(accNum == accNum)
+            return true;
+    }
+    data.close();
+    return false;
+}
+
+
+
+bool rechargeInData(const QString &accNum, double newBalance)
+{
+
+}
+
+
+
+bool writeClientToData(const QString &name, const QString &pin, const QString &type)
+{
+    bool result = false;
+    QString number;
+    QFile data("data.txt");
+    if(!data.open(QIODevice::Append | QIODevice::Text) || !getLastNum(number, data))
+        return result;
+    if(!std::next_permutation(number.begin(), number.end() ))
+        return result;
+    QString newClient = number + ' ' + pin + ' ' + type + ' ' + name + ' ' +
+            '0' + ' ' + '0' + ' ' + '0' + '\n';
+
+    QTextStream out(&data);
+    out.seek(data.size());
+
+    out << newClient;
+    data.close();
+    return true;
+}
+
+bool writeCurrent(const QString & info)
+{
+    QFile current("current.txt");
+    if(!current.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    QTextStream out(&current);
+    out << info;
+    current.close();
+    return true;
+}
+bool getLastNum(QString & last, QFile & data)
+{
+    QString clientInfo;
+    QTextStream in(&data);
+    while(!in.atEnd())
+        clientInfo = in.readLine();
+    last = clientInfo.section(' ', BankAccount::Number, BankAccount::Number);
+    data.close();
+    return true;
+}
+
+bool checkNum(const QString & num)
+{
+    if(num.isEmpty() || num.length() != NUMBER_LEN)
+        return false;
+    for(int i = 0; i < num.length(); ++i)
+        if(!num.at(i).isNumber())
+            return false;
+    return true;
+}
+
+bool checkPin(const QString & pin)
+{
+    if(pin.isEmpty() || pin.length() != PIN_LEN)
+        return false;
+    for(int i = 0; i < pin.length(); ++i)
+        if(!pin.at(i).isNumber())
+            return false;
+    return true;
+}

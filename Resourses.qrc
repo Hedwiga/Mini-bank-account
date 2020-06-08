@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/new/icons">
+        <file>Resources/money.png</file>
+    </qresource>
+</RCC>
